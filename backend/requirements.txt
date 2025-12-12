@@ -1,8 +1,9 @@
 fastapi
 sqlmodel
-uvicorn
+uvicorn[standard]
 python-dotenv
-python-jose[jwt]
+python-jose[cryptography]
 passlib[bcrypt]
+psycopg2-binary
 pytest
 httpx

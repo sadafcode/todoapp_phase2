@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware # NEW IMPORT
@@ -18,14 +19,22 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-# NEW CORS CONFIGURATION
+# CORS CONFIGURATION - Support both local and production
 origins = [
     "http://localhost",
-    "http://localhost:3000", # Frontend's default port
-    "http://localhost:3001", # Frontend on port 3001
+    "http://localhost:3000",
+    "http://localhost:3001",
     "http://127.0.0.1:3000",
     "http://127.0.0.1:3001",
 ]
+
+# Add Vercel frontend URL from environment variable if present
+frontend_url = os.getenv("FRONTEND_URL")
+if frontend_url:
+    origins.append(frontend_url)
+    # Also allow Vercel preview deployments
+    if "vercel.app" in frontend_url:
+        origins.append("https://*.vercel.app")
 
 app.add_middleware(
     CORSMiddleware,
