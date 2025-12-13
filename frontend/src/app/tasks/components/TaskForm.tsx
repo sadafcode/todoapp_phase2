@@ -14,14 +14,14 @@ export default function TaskForm({ onTaskCreated }: TaskFormProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
-  const { user, authToken } = useAuth() // Get user info and token from AuthContext
+  const { user, token } = useAuth() // Get user info and token from AuthContext
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setLoading(true)
 
-    if (!user || !authToken) {
+    if (!user || !token) {
       setError('User not authenticated. Please log in.')
       setLoading(false)
       router.push('/login')
@@ -33,7 +33,7 @@ export default function TaskForm({ onTaskCreated }: TaskFormProps) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`,
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({ title, description }),
       })
