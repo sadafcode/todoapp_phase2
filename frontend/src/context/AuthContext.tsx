@@ -12,6 +12,12 @@ import { useRouter } from 'next/navigation'
 import { setAuthToken, getAuthToken, removeAuthToken } from '@/lib/auth'
 import { handleResponse, authFetch } from '@/lib/api'
 
+interface AuthUser {
+  id: string;
+  email: string;
+  name: string;
+}
+
 interface AuthContextType {
   user: { id: string; email: string; name: string } | null
   token: string | null
@@ -121,13 +127,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       // Let's add a dummy /auth/me call, assuming it exists on backend.
       // This endpoint needs to be implemented on the backend as well.
-      // For now, let's define the interface for `AuthUser` that backend returns.
-
-      interface AuthUser {
-        id: string;
-        email: string;
-        name: string;
-      }
+      // AuthUser interface is now defined at the top of the file.
 
       const response = await authFetch('/auth/me', { authToken }); // Assuming /auth/me exists
       if (response.ok) {
@@ -217,6 +217,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     router.push('/login'); // Redirect to login on logout
   }, [router]);
 
+  const refreshUser = useCallback(async () => {
+    const storedToken = getAuthToken();
+    if (storedToken) {
+      await fetchUserFromToken(storedToken);
+    }
+  }, [fetchUserFromToken]);
+
   const contextValue = React.useMemo(
     () => ({
       user,
@@ -226,9 +233,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       login,
       signup,
       logout,
-      refreshUser: fetchUserFromToken, // Expose to allow manual refresh if needed
+      refreshUser,
     }),
-    [user, token, loading, login, signup, logout, fetchUserFromToken]
+    [user, token, loading, login, signup, logout, refreshUser]
   );
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;

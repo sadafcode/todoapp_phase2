@@ -12,10 +12,10 @@ export const authFetch = async (
   options: RequestOptions = {}
 ) => {
   const token = options.authToken === undefined ? getAuthToken() : options.authToken
-  const headers = {
+  const headers: HeadersInit = {
     ...options.headers,
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    'Content-Type': options.body instanceof FormData ? undefined : 'application/json',
+    ...(options.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
   }
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
