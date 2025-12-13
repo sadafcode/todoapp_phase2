@@ -159,7 +159,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, [fetchUserFromToken]);
 
   const login = useCallback(
-    async (email, password) => {
+    async (email: string, password: string) => {
       setLoading(true);
       try {
         const response = await authFetch('/auth/login', {
@@ -185,7 +185,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   );
 
   const signup = useCallback(
-    async (email, password, name) => {
+    async (email: string, password: string, name: string) => {
       setLoading(true);
       try {
         const response = await authFetch('/auth/signup', {
