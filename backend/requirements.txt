@@ -6,5 +6,6 @@ pyjwt
 bcrypt
 psycopg2-binary
 email-validator
+pydantic[email]
 pytest
 httpx
